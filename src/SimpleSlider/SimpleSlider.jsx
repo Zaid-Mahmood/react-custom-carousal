@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RiArrowLeftWideFill } from "react-icons/ri";
 import { RiArrowRightWideFill } from "react-icons/ri";
 const SimpleSlider = () => {
@@ -10,6 +10,7 @@ const SimpleSlider = () => {
     ]
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const slideTimeout = useRef(null)
     const moveSlideRightFunc = () => {
         setCurrentIndex((prev) => prev < sliderImages.length - 1 ? prev + 1 : prev - (sliderImages.length - 1))
     }
@@ -20,6 +21,23 @@ const SimpleSlider = () => {
     const dotSlideFunc = (id) => {
         setCurrentIndex(id)
     }
+
+    useEffect(() => {
+        const updateSlide = () => {
+            setCurrentIndex((prev) => prev < sliderImages.length - 1 ? prev + 1 : prev - (sliderImages.length - 1))
+        }
+        slideTimeout.current = setTimeout(updateSlide, 2000)
+        // eslint-disable-next-line
+    }, [currentIndex])
+
+    const mouseEnterFunction = ()=>{
+        clearTimeout(slideTimeout.current)
+    }
+    const mouseLeaveFunction = () =>{
+        slideTimeout.current = setTimeout(()=>{
+            setCurrentIndex((prev) => prev < sliderImages.length - 1 ? prev + 1 : prev - (sliderImages.length - 1))
+        }, 2000)
+    }
     const arrowClasses = "text-5xl cursor-pointer";
     const imgClasses = "w-screen h-96";
     const commonDotClasses = "w-2 border rounded-full border-gray-400 p-2 cursor-pointer";
@@ -27,7 +45,7 @@ const SimpleSlider = () => {
         <div className="h-screen grid items-center">
             <h1 className='mx-auto bg-gray-200 text-[#90a4ae] p-4 w-fit rounded-full'>Custom Image Carousal</h1>
             <div className='flex  justify-center items-center'>
-                <RiArrowLeftWideFill onClick={moveSlideLeftFunc} className={arrowClasses} />
+                <RiArrowLeftWideFill  onClick={moveSlideLeftFunc} className={arrowClasses} />
                 <div>
                     <img className={imgClasses} src={sliderImages[currentIndex].img} alt={sliderImages[currentIndex].alt} />
                 </div>
@@ -41,7 +59,7 @@ const SimpleSlider = () => {
                         )
                         :
                         (
-                            <div onClick={() => dotSlideFunc(id)} key={id} className={commonDotClasses}></div>
+                            <div onMouseLeave={()=> mouseLeaveFunction()} onMouseEnter={() => mouseEnterFunction()} onClick={() => dotSlideFunc(id)} key={id} className={commonDotClasses}></div>
                         )
                     )
                 }
