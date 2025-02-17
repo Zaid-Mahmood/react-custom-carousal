@@ -1,9 +1,9 @@
 import './App.css';
-import SimpleSlider from './SimpleSlider/SimpleSlider';
+import CustomSlider from './SimpleSlider/CustomSlider';
 function App() {
   return (
     <div >
-    <SimpleSlider/>
+    <CustomSlider/>
     </div>
   );
 }
